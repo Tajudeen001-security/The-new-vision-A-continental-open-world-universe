@@ -126,14 +126,24 @@ function drawWorld(){
   for(const n of state.people){ctx.fillStyle="#d0b58b";ctx.beginPath();ctx.arc(n.x,n.y,2.4,0,Math.PI*2);ctx.fill();ctx.fillStyle="#303b42";ctx.fillRect(n.x-1.5,n.y+2,3,4)}
   // Active objective beacon.
   const m=missions[state.mission];if(m){const pulse=8+Math.sin(performance.now()*.004)*3;ctx.strokeStyle="#e3bd75";ctx.lineWidth=2;ctx.beginPath();ctx.arc(m.x,m.y,pulse,0,Math.PI*2);ctx.stroke();ctx.fillStyle="rgba(227,189,117,.15)";ctx.beginPath();ctx.arc(m.x,m.y,25,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f2d49b";ctx.font="bold 10px sans-serif";ctx.fillText("OBJECTIVE",m.x+16,m.y-18)}
-  // Player vehicle.
-  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);
+  // Player vehicle stays parked while the character explores on foot.
+  const car=p.mode==="vehicle"?p:p.vehicle;
+  ctx.save();ctx.translate(car.x,car.y);ctx.rotate(car.a);
   ctx.fillStyle="rgba(0,0,0,.38)";roundRect(ctx,-15,-8,34,20,5,ctx.fillStyle);
   ctx.fillStyle="#b88b4b";roundRect(ctx,-17,-10,34,20,5,ctx.fillStyle);
   ctx.fillStyle="#25373b";roundRect(ctx,-8,-8,15,16,3,ctx.fillStyle);
   ctx.fillStyle="#e9d4a4";ctx.fillRect(13,-7,3,4);ctx.fillRect(13,3,3,4);
   ctx.fillStyle="#b44e3c";ctx.fillRect(-17,-7,2,4);ctx.fillRect(-17,3,2,4);
   ctx.restore();
+  if(p.mode==="foot"){
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);
+    ctx.fillStyle="rgba(0,0,0,.35)";ctx.beginPath();ctx.ellipse(1,5,8,5,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#c78f63";ctx.beginPath();ctx.arc(0,-5,4.2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#d5b078";roundRect(ctx,-5,-2,10,12,3,ctx.fillStyle);
+    ctx.fillStyle="#263d43";ctx.fillRect(-4,8,3,6);ctx.fillRect(1,8,3,6);
+    ctx.fillStyle="#d5b078";ctx.fillRect(-7,0,2,7);ctx.fillRect(5,0,2,7);
+    ctx.restore();
+  }
   ctx.restore();
 }
 function update(dt){
