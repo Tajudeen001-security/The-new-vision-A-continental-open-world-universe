@@ -10,7 +10,7 @@ const keys = new Set();
 const state = {
   active:false, paused:false, last:0, time:16.7, money:12500, rep:0,
   camera:{x:0,y:0}, toastTimer:0, sound:true, mission:0, missionStep:0,
-  player:{x:430,y:520,a:0,v:0,health:100},
+  player:{x:430,y:520,a:0,v:0,health:100,mode:"vehicle",vehicle:{x:430,y:520,a:0}},
   traffic:[], people:[], buildings:[], parks:[], particles:[],
   roadLines:[], citySeed:19
 };
@@ -140,13 +140,24 @@ function update(dt){
   if(!state.active||state.paused)return;
   const p=state.player;
   const forward=keys.has("w")||keys.has("arrowup"),back=keys.has("s")||keys.has("arrowdown"),left=keys.has("a")||keys.has("arrowleft"),right=keys.has("d")||keys.has("arrowright");
-  if(forward)p.v+=115*dt;if(back)p.v-=90*dt;
-  p.v*=Math.pow(keys.has(" ")?.88:.975,dt*60);p.v=Math.max(-95,Math.min(190,p.v));
-  const steer=(left?-1:0)+(right?1:0);
-  p.a+=steer*(1.9*Math.min(1,Math.abs(p.v)/45))*dt*(p.v>=0?1:-1);
-  const nx=p.x+Math.cos(p.a)*p.v*dt,ny=p.y+Math.sin(p.a)*p.v*dt;
-  const hit=state.buildings.some(b=>nx>b.x-17&&nx<b.x+b.w+17&&ny>b.y-14&&ny<b.y+b.h+14);
-  if(!hit){p.x=Math.max(20,Math.min(WORLD.w-25,nx));p.y=Math.max(20,Math.min(WORLD.h-25,ny))}else{p.v*=-.22;showToast("Watch the buildings — find another route.");}
+  if(p.mode==="vehicle"){
+    if(forward)p.v+=115*dt;if(back)p.v-=90*dt;
+    p.v*=Math.pow(keys.has(" ")?.88:.975,dt*60);p.v=Math.max(-95,Math.min(190,p.v));
+    const steer=(left?-1:0)+(right?1:0);
+    p.a+=steer*(1.9*Math.min(1,Math.abs(p.v)/45))*dt*(p.v>=0?1:-1);
+    const nx=p.x+Math.cos(p.a)*p.v*dt,ny=p.y+Math.sin(p.a)*p.v*dt;
+    const hit=state.buildings.some(b=>nx>b.x-17&&nx<b.x+b.w+17&&ny>b.y-14&&ny<b.y+b.h+14);
+    if(!hit){p.x=Math.max(20,Math.min(WORLD.w-25,nx));p.y=Math.max(20,Math.min(WORLD.h-25,ny));p.vehicle.x=p.x;p.vehicle.y=p.y;p.vehicle.a=p.a}
+    else{p.v*=-.22;showToast("Watch the buildings — find another route.");}
+  }else{
+    const moving=forward||back||left||right;
+    if(left)p.a-=2.8*dt;if(right)p.a+=2.8*dt;
+    const pace=forward?105:back?-72:0;
+    const nx=p.x+Math.cos(p.a)*pace*dt,ny=p.y+Math.sin(p.a)*pace*dt;
+    const hit=state.buildings.some(b=>nx>b.x-9&&nx<b.x+b.w+9&&ny>b.y-9&&ny<b.y+b.h+9);
+    if(moving&&!hit){p.x=Math.max(12,Math.min(WORLD.w-12,nx));p.y=Math.max(12,Math.min(WORLD.h-12,ny))}
+    p.v=0;
+  }
   for(const t of state.traffic){t.x+=Math.cos(t.a)*t.speed*dt;t.y+=Math.sin(t.a)*t.speed*dt;if(t.x<0)t.x=WORLD.w;if(t.x>WORLD.w)t.x=0;if(t.y<0)t.y=WORLD.h;if(t.y>WORLD.h)t.y=0;}
   for(const n of state.people){n.phase+=dt;n.x+=Math.cos(n.a+Math.sin(n.phase)*.3)*n.speed*dt;n.y+=Math.sin(n.a+Math.sin(n.phase)*.3)*n.speed*dt;if(n.x<0||n.x>WORLD.w||n.y<0||n.y>WORLD.h)n.a+=Math.PI;}
   state.time=(state.time+dt*.035)%24;
@@ -164,7 +175,7 @@ function updateHUD(){
   $("mission-title").textContent=m?m.title:"FREE ROAM";
   $("mission-copy").textContent=m?m.copy:"Explore the city and discover your next opportunity.";
   $("district").textContent=d?d.name:"OUTSKIRTS";
-  $("speed").textContent=String(Math.round(Math.abs(p.v)*.72)).padStart(3,"0");
+  $("speed").textContent=String(Math.round(Math.abs(p.v)*.72)).padStart(3,"0");\n  $("vehicle-name").textContent=p.mode==="vehicle"?"SENTINEL S":"ON FOOT";\n  $("vehicle-name").nextElementSibling.textContent=p.mode==="vehicle"?"PERSONAL VEHICLE":"F — ENTER VEHICLE";
   const hours=Math.floor(state.time),mins=Math.floor((state.time-hours)*60);
   $("clock").textContent=String(hours).padStart(2,"0")+":"+String(mins).padStart(2,"0")+" · "+(hours>18||hours<6?"NIGHT":"CLEAR");
 }
@@ -179,8 +190,8 @@ function completeMission(){
 function showToast(text){
   const el=$("toast");el.textContent=text;el.classList.add("show");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove("show"),2900);
 }
-function saveGame(){localStorage.setItem("crownline-save",JSON.stringify({money:state.money,rep:state.rep,mission:state.mission,x:state.player.x,y:state.player.y,a:state.player.a}))}
-function loadGame(){try{const s=JSON.parse(localStorage.getItem("crownline-save"));if(s){state.money=s.money??12500;state.rep=s.rep??0;state.mission=Math.min(s.mission??0,missions.length);state.player.x=s.x??430;state.player.y=s.y??520;state.player.a=s.a??-Math.PI/2;return true}}catch{}return false}
+function saveGame(){localStorage.setItem("crownline-save",JSON.stringify({money:state.money,rep:state.rep,mission:state.mission,x:state.player.x,y:state.player.y,a:state.player.a,vehicle:state.player.vehicle}))}
+function loadGame(){try{const s=JSON.parse(localStorage.getItem("crownline-save"));if(s){state.money=s.money??12500;state.rep=s.rep??0;state.mission=Math.min(s.mission??0,missions.length);state.player.x=s.x??430;state.player.y=s.y??520;state.player.a=s.a??-Math.PI/2;state.player.vehicle=s.vehicle??{x:state.player.x,y:state.player.y,a:state.player.a};state.player.mode="vehicle";return true}}catch{}return false}
 function drawMinimap(){
   const w=mini.width,h=mini.height,scale=w/WORLD.w;mctx.clearRect(0,0,w,h);mctx.fillStyle="#172623";mctx.fillRect(0,0,w,h);
   mctx.fillStyle="#3b4646";for(const r of state.roadLines)mctx.fillRect(r.x*scale,r.y*scale,Math.max(1,r.w*scale),Math.max(1,r.h*scale));
@@ -209,6 +220,13 @@ addEventListener("keydown",e=>{
   const k=e.key.toLowerCase();if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();
   keys.add(k);
   if(k==="escape"&&state.active){state.paused=!state.paused;$("pause-screen").hidden=!state.paused}
+  if(k==="f"&&state.active&&!state.paused){
+    const p=state.player;
+    if(p.mode==="vehicle"){p.vehicle={x:p.x,y:p.y,a:p.a};p.x+=Math.cos(p.a+Math.PI/2)*25;p.y+=Math.sin(p.a+Math.PI/2)*25;p.mode="foot";p.v=0;showToast("You left the Sentinel S. Explore on foot.");}
+    else if(Math.hypot(p.x-p.vehicle.x,p.y-p.vehicle.y)<58){p.x=p.vehicle.x;p.y=p.vehicle.y;p.a=p.vehicle.a;p.mode="vehicle";showToast("You entered the Sentinel S.");}
+    else showToast("Move closer to your vehicle to enter it.");
+    updateHUD();saveGame();
+  }
   if(k==="e"&&state.active&&!state.paused){const m=missions[state.mission];if(m&&Math.hypot(state.player.x-m.x,state.player.y-m.y)<110)completeMission();else showToast("Nothing to interact with nearby. Follow the gold marker.")}
   if(k==="m"&&state.active)showToast("CITY MAP · Explore the districts and follow your objective.");
 });
