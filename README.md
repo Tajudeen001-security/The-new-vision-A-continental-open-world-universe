@@ -17,7 +17,7 @@ python -m http.server 8080
 
 Then visit `http://localhost:8080`.
 
-The prototype is client-side and does not require an account or backend.
+The prototype is client-side and does not require an account or backend. You can now leave the vehicle, explore on foot, and return to the parked vehicle with F.
 
 ## Controls
 
