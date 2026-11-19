@@ -200,8 +200,8 @@ function completeMission(){
 function showToast(text){
   const el=$("toast");el.textContent=text;el.classList.add("show");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove("show"),2900);
 }
-function saveGame(){localStorage.setItem("crownline-save",JSON.stringify({money:state.money,rep:state.rep,mission:state.mission,x:state.player.x,y:state.player.y,a:state.player.a,vehicle:state.player.vehicle}))}
-function loadGame(){try{const s=JSON.parse(localStorage.getItem("crownline-save"));if(s){state.money=s.money??12500;state.rep=s.rep??0;state.mission=Math.min(s.mission??0,missions.length);state.player.x=s.x??430;state.player.y=s.y??520;state.player.a=s.a??-Math.PI/2;state.player.vehicle=s.vehicle??{x:state.player.x,y:state.player.y,a:state.player.a};state.player.mode="vehicle";return true}}catch{}return false}
+function saveGame(){localStorage.setItem("crownline-save",JSON.stringify({money:state.money,rep:state.rep,mission:state.mission,x:state.player.x,y:state.player.y,a:state.player.a,mode:state.player.mode,vehicle:state.player.vehicle}))}
+function loadGame(){try{const s=JSON.parse(localStorage.getItem("crownline-save"));if(s){state.money=s.money??12500;state.rep=s.rep??0;state.mission=Math.min(s.mission??0,missions.length);state.player.x=s.x??430;state.player.y=s.y??520;state.player.a=s.a??-Math.PI/2;state.player.vehicle=s.vehicle??{x:state.player.x,y:state.player.y,a:state.player.a};state.player.mode=s.mode==="foot"?"foot":"vehicle";return true}}catch{}return false}
 function drawMinimap(){
   const w=mini.width,h=mini.height,scale=w/WORLD.w;mctx.clearRect(0,0,w,h);mctx.fillStyle="#172623";mctx.fillRect(0,0,w,h);
   mctx.fillStyle="#3b4646";for(const r of state.roadLines)mctx.fillRect(r.x*scale,r.y*scale,Math.max(1,r.w*scale),Math.max(1,r.h*scale));
