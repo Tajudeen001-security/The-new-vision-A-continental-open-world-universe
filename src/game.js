@@ -10,7 +10,7 @@ const keys = new Set();
 const state = {
   active:false, paused:false, last:0, time:16.7, money:12500, rep:0,
   camera:{x:0,y:0}, toastTimer:0, sound:true, mission:0, missionStep:0,
-  player:{x:520,y:520,a:-Math.PI/2,v:0,health:100},
+  player:{x:430,y:520,a:0,v:0,health:100},
   traffic:[], people:[], buildings:[], parks:[], particles:[],
   roadLines:[], citySeed:19
 };
@@ -38,7 +38,7 @@ function buildCity(){
     state.roadLines.push({x:0,y:y-34,w:WORLD.w,h:68});
   }
   for(let gy=0;gy<7;gy++) for(let gx=0;gx<10;gx++){
-    const bx=gx*TILE+48, by=gy*TILE+48;
+    const bx=gx*TILE+184, by=gy*TILE+179;
     if(bx>WORLD.w-80||by>WORLD.h-80) continue;
     const seed=gy*13+gx*7;
     if((gx===7&&gy>=3)||(gx===8&&gy>=3)){
@@ -47,8 +47,8 @@ function buildCity(){
     if(gx===9&&gy>=4){state.parks.push({x:bx,y:by,w:170,h:150,kind:"water"});continue;}
     const count=2+Math.floor(rand(seed)*3);
     for(let i=0;i<count;i++){
-      const w=42+rand(seed+i+3)*48, h=42+rand(seed+i+8)*52;
-      const x=bx+rand(seed+i+13)*135, y=by+rand(seed+i+21)*135;
+      const w=38+rand(seed+i+3)*38, h=38+rand(seed+i+8)*38;
+      const x=bx+8+rand(seed+i+13)*105, y=by+8+rand(seed+i+21)*105;
       const height=1+Math.floor(rand(seed+i+30)*5);
       state.buildings.push({x,y,w,h,height,color:palette[Math.floor(rand(seed+i+44)*palette.length)],roof:rand(seed+i+55)>.72,seed:seed+i});
     }
@@ -180,7 +180,7 @@ function showToast(text){
   const el=$("toast");el.textContent=text;el.classList.add("show");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove("show"),2900);
 }
 function saveGame(){localStorage.setItem("crownline-save",JSON.stringify({money:state.money,rep:state.rep,mission:state.mission,x:state.player.x,y:state.player.y,a:state.player.a}))}
-function loadGame(){try{const s=JSON.parse(localStorage.getItem("crownline-save"));if(s){state.money=s.money??12500;state.rep=s.rep??0;state.mission=Math.min(s.mission??0,missions.length);state.player.x=s.x??520;state.player.y=s.y??520;state.player.a=s.a??-Math.PI/2;return true}}catch{}return false}
+function loadGame(){try{const s=JSON.parse(localStorage.getItem("crownline-save"));if(s){state.money=s.money??12500;state.rep=s.rep??0;state.mission=Math.min(s.mission??0,missions.length);state.player.x=s.x??430;state.player.y=s.y??520;state.player.a=s.a??-Math.PI/2;return true}}catch{}return false}
 function drawMinimap(){
   const w=mini.width,h=mini.height,scale=w/WORLD.w;mctx.clearRect(0,0,w,h);mctx.fillStyle="#172623";mctx.fillRect(0,0,w,h);
   mctx.fillStyle="#3b4646";for(const r of state.roadLines)mctx.fillRect(r.x*scale,r.y*scale,Math.max(1,r.w*scale),Math.max(1,r.h*scale));
