@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090d12">
+  <meta name="description" content="CROWNLINE — Build your empire. Define your legacy. An original open-world experience by JagX and JRILICENSE.">
+  <title>CROWNLINE — Build Your Empire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main id="game-shell">
+    <canvas id="world" aria-label="Crownline playable city"></canvas>
+
+    <div class="vignette"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Crownline home">
+        <span class="brand-mark">C</span>
+        <span class="brand-name">CROWN<span>LINE</span><small>JAGX STUDIOS</small></span>
+      </a>
+      <div class="top-center"><span class="live-dot"></span> OPEN WORLD PROTOTYPE <i></i> BUILD 0.1.0</div>
+      <button class="icon-button" id="sound-toggle" title="Toggle sound" aria-label="Toggle sound">♫</button>
+    </header>
+
+    <section class="hud" id="hud" hidden>
+      <div class="hud-left">
+        <div class="stat-card"><span class="eyebrow">AVAILABLE FUNDS</span><strong id="money">₦ 12,500</strong><small>PERSONAL ACCOUNT</small></div>
+        <div class="stat-card compact"><span class="eyebrow">REPUTATION</span><strong id="rep">LEVEL 01</strong><div class="rep-track"><span id="rep-fill"></span></div></div>
+      </div>
+      <div class="mission-card">
+        <span class="eyebrow gold">CURRENT OBJECTIVE</span>
+        <strong id="mission-title">A NEW BEGINNING</strong>
+        <p id="mission-copy">Find the Crownline contact at Meridian Plaza.</p>
+        <div class="mission-progress"><span id="mission-progress"></span></div>
+      </div>
+      <div class="hud-right">
+        <div class="location-card"><span class="eyebrow">CURRENT DISTRICT</span><strong id="district">MERIDIAN QUARTER</strong><small id="clock">16:42 · CLEAR</small></div>
+        <div class="minimap-wrap"><canvas id="minimap" width="180" height="180"></canvas><span class="map-label">CITY RADAR</span></div>
+      </div>
+      <div class="bottom-hud">
+        <div class="speed"><strong id="speed">000</strong><span>KM/H</span></div>
+        <div class="vehicle-info"><span class="vehicle-dot"></span><div><b id="vehicle-name">SENTINEL S</b><small>PERSONAL VEHICLE</small></div></div>
+        <div class="controls-hint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> DRIVE <span>·</span> <kbd>SPACE</kbd> HANDBRAKE <span>·</span> <kbd>E</kbd> INTERACT</div>
+      </div>
+    </section>
+
+    <section class="intro" id="intro">
+      <div class="intro-backdrop"></div>
+      <div class="intro-content">
+        <div class="pre-title"><span></span> AN ORIGINAL OPEN-WORLD EXPERIENCE <span></span></div>
+        <div class="hero-wordmark">CROWN<span>LINE</span></div>
+        <p class="tagline">BUILD YOUR EMPIRE. <b>DEFINE YOUR LEGACY.</b></p>
+        <p class="intro-description">A city of ambition. A world of opportunity.<br>Every road leads somewhere. Every choice leaves a mark.</p>
+        <button class="start-button" id="start-button"><span>ENTER THE CITY</span><b>↗</b></button>
+        <div class="intro-foot"><span>PC BROWSER EXPERIENCE</span><span>BY JAGX AND JRILICENSE</span></div>
+      </div>
+      <div class="intro-side-note">THE CITY IS YOURS TO DISCOVER <span>01 / 06</span></div>
+    </section>
+
+    <section class="pause-screen" id="pause-screen" hidden>
+      <div class="pause-panel">
+        <span class="eyebrow gold">CROWNLINE</span>
+        <h2>TAKE A<br><em>BREATHER.</em></h2>
+        <p>Your city is waiting.</p>
+        <button class="start-button" id="resume-button"><span>RETURN TO CITY</span><b>↗</b></button>
+        <small>PRESS ESC TO RESUME</small>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" role="status"></div>
+    <footer class="legal">© <span id="year"></span> JAGX STUDIOS · BY JAGX AND JRILICENSE <span>EARLY PLAYABLE PROTOTYPE</span></footer>
+  </main>
+  <script type="module" src="./src/game.js"></script>
+</body>
+</html>
