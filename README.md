@@ -27,7 +27,7 @@ The prototype is client-side and does not require an account or backend. You can
 | S / ↓ | Reverse / brake |
 | A / ← | Steer left |
 | D / → | Steer right |
-| Space | Handbrake |
+| Space | Handbrake (vehicle) |\n| F | Enter / exit your vehicle |
 | E | Interact near an objective |
 | Esc | Pause / resume |
 | M | City map hint |
